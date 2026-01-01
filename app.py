@@ -301,8 +301,8 @@ def format_int(x: float | int) -> str:
 # -----------------------------
 # Interfaz principal de la app
 # -----------------------------
-st.title("📈 Dashboard de Ventas")
-st.markdown("¡Bienvenido! Explora las ventas de manera intuitiva y amigable. 😊")  # Añadido texto acogedor para humanizar
+st.title("Dashboard de Ventas")
+st.markdown("Practica Final Visualización de Datos - Miguel Pajuelo Gómez")  # Añadido texto acogedor para humanizar
 
 # Carga de datos y tablas derivadas
 df = load_data()
@@ -321,7 +321,7 @@ date_min = df["date"].min().date()
 date_max = df["date"].max().date()
 
 # Creación de pestañas para organizar el contenido
-tabs = st.tabs(["1) Global 🌍", "2) Por tienda 🏪", "3) Por estado 🗺️", "4) Insights extra 💡"])  # Añadidos emojis para humanizar
+tabs = st.tabs(["1) Global", "2) Por tienda", "3) Por estado", "4) Insights extra"])  # Añadidos emojis para humanizar
 
 # -----------------------------
 # Pestaña 1: Visión Global
