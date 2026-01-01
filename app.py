@@ -50,6 +50,10 @@ DAY_ES = {
 # -----------------------------
 # Carga de datos
 # -----------------------------
+
+URL1 = "https://dl.dropboxusercontent.com/scl/fi/oni9yw8jyv2zh3e09ebgc/parte_1.csv?rlkey=4trd7syzk8yuoerz4angussmo"
+URL2 = "https://dl.dropboxusercontent.com/scl/fi/88mexprkeldc8d6g4wlob/parte_2.csv?rlkey=hjnbwcx63mavy3it7v5r7cjem"
+
 @st.cache_data(show_spinner=True)
 def load_data() -> pd.DataFrame:
     """
@@ -62,58 +66,21 @@ def load_data() -> pd.DataFrame:
     Returns:
         pd.DataFrame: DataFrame concatenado y optimizado con los datos de ventas.
     """
-    base_dir = Path(__file__).parent
-
-    p1 = base_dir / "parte_1.csv"
-    p2 = base_dir / "parte_2.csv"
-
-    # Sobrescribe rutas si se definen en variables de entorno
-    p1_env = os.getenv("DATA_PATH_1")
-    p2_env = os.getenv("DATA_PATH_2")
-    if p1_env:
-        p1 = Path(p1_env)
-    if p2_env:
-        p2 = Path(p2_env)
-
-    # Columnas específicas a cargar para evitar datos innecesarios
-    usecols = [
-        "date", "store_nbr", "family", "sales", "onpromotion",
-        "holiday_type", "locale", "locale_name", "transferred",
-        "dcoilwtico", "city", "state", "store_type", "cluster",
-        "transactions", "year", "month", "week", "quarter", "day_of_week",
-    ]
-
-    # Tipos de datos optimizados para reducir memoria
+    usecols = ["date","store_nbr","family","state","onpromotion","sales"]
     dtypes = {
         "store_nbr": "int16",
-        "sales": "float32",
+        "family": "category",
+        "state": "category",
         "onpromotion": "int16",
-        "dcoilwtico": "float32",
-        "cluster": "int16",
-        "transactions": "float32",
-        "year": "int16",
-        "month": "int8",
-        "week": "int16",
-        "quarter": "int8",
+        "sales": "float32"
     }
 
-    # Carga de los CSV con optimizaciones
-    df1 = pd.read_csv(p1, usecols=usecols, dtype=dtypes, parse_dates=["date"], low_memory=False)
-    df2 = pd.read_csv(p2, usecols=usecols, dtype=dtypes, parse_dates=["date"], low_memory=False)
+    df1 = pd.read_csv(URL1, usecols=usecols, dtype=dtypes, parse_dates=["date"], low_memory=False)
+    df2 = pd.read_csv(URL2, usecols=usecols, dtype=dtypes, parse_dates=["date"], low_memory=False)
 
-    # Concatenación de los DataFrames
     df = pd.concat([df1, df2], ignore_index=True)
-
-    # Conversión de columnas categóricas para optimizar memoria
-    cat_cols = [
-        "family", "holiday_type", "locale", "locale_name", "transferred",
-        "city", "state", "store_type", "day_of_week",
-    ]
-    for c in cat_cols:
-        if c in df.columns:
-            df[c] = df[c].astype("category")
-
     return df
+
 
 
 @st.cache_data(show_spinner=False)
