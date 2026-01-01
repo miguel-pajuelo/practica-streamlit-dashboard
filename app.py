@@ -57,37 +57,15 @@ URL2 = "https://dl.dropboxusercontent.com/scl/fi/88mexprkeldc8d6g4wlob/parte_2.c
 @st.cache_data(show_spinner=True)
 def load_data() -> pd.DataFrame:
     """
-    Carga el dataset desde dos CSV (parte_1 y parte_2) y los concatena.
-
-    Versión “Cloud-ready”:
-    - Prioriza DATA_URL_1 / DATA_URL_2 (Dropbox/HTTP) si existen.
-    - Si no, usa DATA_PATH_1 / DATA_PATH_2 (rutas locales).
-    - Si no, busca parte_1.csv / parte_2.csv junto a app.py.
-    - Mantiene optimización de memoria (dtypes + categorías).
+    Carga el dataset desde dos CSV alojados en Dropbox (parte_1 y parte_2)
+    y los concatena en un único DataFrame.
+    Compatible 100% con Streamlit Cloud.
     """
-    base_dir = Path(__file__).parent
-    p1 = base_dir / "parte_1.csv"
-    p2 = base_dir / "parte_2.csv"
 
-    # 1) URLs (ideal para Streamlit Cloud)
-    url1 = os.getenv("DATA_URL_1")
-    url2 = os.getenv("DATA_URL_2")
+    URL1 = "https://dl.dropboxusercontent.com/scl/fi/oni9yw8jyv2zh3e09ebgc/parte_1.csv?rlkey=4trd7syzk8yuoerz4angussmo"
+    URL2 = "https://dl.dropboxusercontent.com/scl/fi/88mexprkeldc8d6g4wlob/parte_2.csv?rlkey=hjnbwcx63mavy3it7v5r7cjem"
 
-    # Si no vienen por env, usa las constantes globales URL1/URL2 si existen
-    if not url1 and "URL1" in globals():
-        url1 = globals()["URL1"]
-    if not url2 and "URL2" in globals():
-        url2 = globals()["URL2"]
-
-    # 2) Rutas locales por env (fallback)
-    p1_env = os.getenv("DATA_PATH_1")
-    p2_env = os.getenv("DATA_PATH_2")
-    if p1_env:
-        p1 = Path(p1_env)
-    if p2_env:
-        p2 = Path(p2_env)
-
-    # Columnas específicas a cargar para evitar datos innecesarios
+    # Columnas necesarias
     usecols = [
         "date", "store_nbr", "family", "sales", "onpromotion",
         "holiday_type", "locale", "locale_name", "transferred",
@@ -95,7 +73,7 @@ def load_data() -> pd.DataFrame:
         "transactions", "year", "month", "week", "quarter", "day_of_week",
     ]
 
-    # Tipos de datos optimizados para reducir memoria
+    # Tipos optimizados
     dtypes = {
         "store_nbr": "int16",
         "sales": "float32",
@@ -109,18 +87,14 @@ def load_data() -> pd.DataFrame:
         "quarter": "int8",
     }
 
-    # Elige fuente (URL si está, si no archivo local)
-    src1 = url1 if url1 else p1
-    src2 = url2 if url2 else p2
+    # 🔥 FORZAR SIEMPRE DROPBOX
+    df1 = pd.read_csv(URL1, usecols=usecols, dtype=dtypes, parse_dates=["date"], low_memory=False)
+    df2 = pd.read_csv(URL2, usecols=usecols, dtype=dtypes, parse_dates=["date"], low_memory=False)
 
-    # Carga de los CSV con optimizaciones
-    df1 = pd.read_csv(src1, usecols=usecols, dtype=dtypes, parse_dates=["date"], low_memory=False)
-    df2 = pd.read_csv(src2, usecols=usecols, dtype=dtypes, parse_dates=["date"], low_memory=False)
-
-    # Concatenación de los DataFrames
+    # Concatenar
     df = pd.concat([df1, df2], ignore_index=True)
 
-    # Conversión de columnas categóricas para optimizar memoria
+    # Categoricals → menos memoria
     cat_cols = [
         "family", "holiday_type", "locale", "locale_name", "transferred",
         "city", "state", "store_type", "day_of_week",
@@ -130,6 +104,7 @@ def load_data() -> pd.DataFrame:
             df[c] = df[c].astype("category")
 
     return df
+
 
 @st.cache_data(show_spinner=False)
 def build_derived_tables(df: pd.DataFrame) -> dict:
