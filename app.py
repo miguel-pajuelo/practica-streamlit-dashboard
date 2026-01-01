@@ -16,23 +16,23 @@ st.set_page_config(
     layout="wide",
 )
 
-# CSS personalizado mejorado para una interfaz más humana: colores suaves, tipografía legible, sombras suaves, transiciones y un diseño más cálido y acogedor
+# CSS personalizado mejorado para una interfaz más humana con fondo oscuro: colores oscuros, tipografía legible, sombras suaves, transiciones y un diseño más cálido y acogedor en modo oscuro
 st.markdown(
     """
     <style>
-      /* Fondo general con un tono cálido y sutil */
+      /* Fondo general oscuro para modo nocturno */
       .stApp {
-        background-color: #f9f7f4; /* Beige claro para un feeling humano y cálido */
-        color: #333333; /* Texto oscuro para legibilidad */
+        background-color: #121212; /* Gris oscuro para fondo principal */
+        color: #e0e0e0; /* Texto claro para legibilidad */
       }
       
       /* Contenedores con bordes redondeados y sombras suaves para profundidad */
       .block-container { 
         padding-top: 1.2rem; 
         padding-bottom: 2.5rem; 
-        background-color: #ffffff; /* Fondo blanco para secciones */
+        background-color: #1e1e1e; /* Fondo gris más claro para secciones */
         border-radius: 12px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); /* Sombra suave */
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* Sombra más pronunciada en oscuro */
       }
       
       /* Métricas con tipografía más grande y amigable */
@@ -43,7 +43,7 @@ st.markdown(
       }
       [data-testid="stMetricLabel"] { 
         font-size: 1rem; 
-        color: #666666; /* Gris suave */
+        color: #b3b3b3; /* Gris claro */
       }
       
       /* Pestañas con estilo más humano: mayor tamaño, hover suave */
@@ -52,42 +52,45 @@ st.markdown(
         padding: 0.8rem 1.2rem; 
         border-radius: 8px; 
         transition: background-color 0.3s ease; /* Transición suave */
+        color: #e0e0e0;
       }
       .stTabs [data-baseweb="tab"]:hover {
-        background-color: #e8f4fd; /* Fondo azul claro al hover */
+        background-color: #2c2c2c; /* Fondo gris oscuro al hover */
       }
       
       /* Tarjetas KPI con diseño más amigable: gradiente sutil, hover efecto */
       .kpi-card { 
         border-radius: 16px; 
         padding: 1rem 1.2rem; 
-        background: linear-gradient(135deg, #ffffff, #f0f4f8); /* Gradiente suave */
-        border: 1px solid rgba(0, 0, 0, 0.05); 
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        background: linear-gradient(135deg, #1e1e1e, #2a2a2a); /* Gradiente oscuro */
+        border: 1px solid rgba(255, 255, 255, 0.1); 
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
         transition: transform 0.2s ease, box-shadow 0.2s ease; /* Animación al hover */
       }
       .kpi-card:hover {
         transform: translateY(-4px); /* Levantar ligeramente */
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
       }
       
       /* Texto muted para descripciones secundarias */
       .muted { 
         opacity: 0.75; 
         font-size: 0.95rem; 
-        color: #555555; 
+        color: #a0a0a0; /* Gris claro */
       }
       
       /* Títulos con tipografía más humana */
       h1, h2, h3 {
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Fuente más amigable */
-        color: #2c3e50; /* Azul oscuro suave */
+        color: #ffffff; /* Blanco para títulos */
       }
       
       /* Botones y selectboxes con estilo redondeado */
       .stSelectbox, .stButton button {
         border-radius: 8px;
-        border: 1px solid #d1d5db;
+        border: 1px solid #3a3a3a;
+        background-color: #1e1e1e;
+        color: #e0e0e0;
         transition: border-color 0.3s ease;
       }
       .stSelectbox:hover, .stButton button:hover {
@@ -271,7 +274,7 @@ with tabs[0]:
                       title="Top 10 productos por venta media (unidades) por registro",
                       labels={"mean_sales": "Venta media", "family": "Producto"},
                       color="mean_sales", color_continuous_scale="bluered")  # Colores más humanos
-    fig_prod.update_layout(height=420, margin=dict(l=20, r=20, t=60, b=20))
+    fig_prod.update_layout(height=420, margin=dict(l=20, r=20, t=60, b=20), template="plotly_dark")  # Tema oscuro para Plotly
     st.plotly_chart(fig_prod, use_container_width=True)
     # ii) Venta media diaria por tienda (todas las tiendas)
     store_mean = (
@@ -302,6 +305,7 @@ with tabs[0]:
         ),
         yaxis=dict(title="Venta media diaria (total)"),
         showlegend=False,
+        template="plotly_dark"  # Tema oscuro
     )
     st.plotly_chart(fig_store_dist, use_container_width=True)
     # iii) Top 10 tiendas por venta media diaria de productos en promoción
@@ -333,6 +337,7 @@ with tabs[0]:
         ),
         yaxis=dict(title="Venta media diaria (promo)"),
         showlegend=False,
+        template="plotly_dark"  # Tema oscuro
     )
     st.plotly_chart(fig_promo_store, use_container_width=True)
     # iv) Día de la semana con más ventas (media diaria total)
@@ -359,7 +364,7 @@ with tabs[0]:
             labels={"day_es": "Día", "sales": "Venta media diaria (total)"},
             color="sales", color_continuous_scale="tealrose"  # Paleta suave
         )
-        fig_dow.update_layout(height=360, margin=dict(l=20, r=20, t=60, b=20))
+        fig_dow.update_layout(height=360, margin=dict(l=20, r=20, t=60, b=20), template="plotly_dark")
         st.plotly_chart(fig_dow, use_container_width=True)
     # v) Volumen medio por semana del año (promedio entre años)
     weekly_total = daily_sales.groupby(["year", "week"], as_index=False)["sales"].sum()
@@ -373,7 +378,7 @@ with tabs[0]:
         line_shape="spline",  # Curvas suaves para feeling humano
         markers=True
     )
-    fig_week.update_layout(height=360, margin=dict(l=20, r=20, t=60, b=20))
+    fig_week.update_layout(height=360, margin=dict(l=20, r=20, t=60, b=20), template="plotly_dark")
     st.plotly_chart(fig_week, use_container_width=True)
     # vi) Volumen medio por mes (promedio entre años)
     monthly_total = daily_sales.groupby(["year", "month"], as_index=False)["sales"].sum()
@@ -387,7 +392,7 @@ with tabs[0]:
         line_shape="spline",  # Curvas suaves
         markers=True
     )
-    fig_month.update_layout(height=360, margin=dict(l=20, r=20, t=60, b=20))
+    fig_month.update_layout(height=360, margin=dict(l=20, r=20, t=60, b=20), template="plotly_dark")
     st.plotly_chart(fig_month, use_container_width=True)
 # -----------------------------
 # Pestaña 2: Análisis por Tienda
@@ -426,7 +431,7 @@ with tabs[1]:
         labels={"year": "Año", "sales": "Ventas (unidades)"},
         color="sales", color_continuous_scale="mint"
     )
-    fig_store_year.update_layout(height=420, margin=dict(l=20, r=20, t=60, b=20))
+    fig_store_year.update_layout(height=420, margin=dict(l=20, r=20, t=60, b=20), template="plotly_dark")
     st.plotly_chart(fig_store_year, use_container_width=True)
 # -----------------------------
 # Pestaña 3: Análisis por Estado
@@ -448,7 +453,7 @@ with tabs[2]:
         labels={"year": "Año", "transactions": "Transacciones"},
         line_shape="spline"
     )
-    fig_trans_year.update_layout(height=380, margin=dict(l=20, r=20, t=60, b=20))
+    fig_trans_year.update_layout(height=380, margin=dict(l=20, r=20, t=60, b=20), template="plotly_dark")
     st.plotly_chart(fig_trans_year, use_container_width=True)
     # b) Ranking de tiendas con más ventas en el estado
     df_state = df[df["state"] == state_sel]
@@ -467,7 +472,7 @@ with tabs[2]:
         labels={"store_nbr": "Tienda", "sales": "Ventas (unidades)"},
         color="sales", color_continuous_scale="bluyl"
     )
-    fig_store_rank.update_layout(height=380, margin=dict(l=20, r=20, t=60, b=20))
+    fig_store_rank.update_layout(height=380, margin=dict(l=20, r=20, t=60, b=20), template="plotly_dark")
     st.plotly_chart(fig_store_rank, use_container_width=True)
     # c) Producto más vendido en el estado (top 10)
     prod_rank = (
@@ -494,7 +499,7 @@ with tabs[2]:
             labels={"family": "Producto", "sales": "Ventas (unidades)"},
             color="sales", color_continuous_scale="earth"
         )
-        fig_prod_rank.update_layout(height=360, margin=dict(l=20, r=20, t=60, b=20))
+        fig_prod_rank.update_layout(height=360, margin=dict(l=20, r=20, t=60, b=20), template="plotly_dark")
         st.plotly_chart(fig_prod_rank, use_container_width=True)
 # -----------------------------
 # Pestaña 4: Insights Extra
@@ -517,7 +522,7 @@ with tabs[3]:
             labels={"date": "Fecha", "promo_share": "Cuota promo"},
             line_shape="spline"
         )
-        fig_share.update_layout(height=360, margin=dict(l=20, r=20, t=60, b=20))
+        fig_share.update_layout(height=360, margin=dict(l=20, r=20, t=60, b=20), template="plotly_dark")
         st.plotly_chart(fig_share, use_container_width=True)
     with c2:
         fig_promo_vs = px.scatter(
@@ -528,7 +533,7 @@ with tabs[3]:
             labels={"promo_sales": "Ventas promo", "total_sales": "Ventas totales"},
             color="promo_share", color_continuous_scale="plasma"
         )
-        fig_promo_vs.update_layout(height=360, margin=dict(l=20, r=20, t=60, b=20))
+        fig_promo_vs.update_layout(height=360, margin=dict(l=20, r=20, t=60, b=20), template="plotly_dark")
         st.plotly_chart(fig_promo_vs, use_container_width=True)
     st.divider()
     # 2) Efecto de holidays: comparación de ventas medias con vs sin holiday_type
@@ -556,7 +561,7 @@ with tabs[3]:
             labels={"label": "", "sales": "Venta media diaria (total)"},
             color="is_holiday", color_discrete_sequence=["#bdc3c7", "#3498db"]
         )
-        fig_holiday.update_layout(height=320, margin=dict(l=20, r=20, t=60, b=20))
+        fig_holiday.update_layout(height=320, margin=dict(l=20, r=20, t=60, b=20), template="plotly_dark")
         st.plotly_chart(fig_holiday, use_container_width=True)
     # 3) Top estados por ventas acumuladas
     state_sales = (
@@ -575,6 +580,6 @@ with tabs[3]:
         labels={"state": "Estado", "sales": "Ventas (unidades)"},
         color="sales", color_continuous_scale="sunsetdark"
     )
-    fig_state.update_layout(height=380, margin=dict(l=20, r=20, t=60, b=20))
+    fig_state.update_layout(height=380, margin=dict(l=20, r=20, t=60, b=20), template="plotly_dark")
     st.plotly_chart(fig_state, use_container_width=True)
     st.caption("Nota: 'transactions' se agrega sin duplicar por (fecha, tienda), porque el dataset repite ese valor por cada family.") 
