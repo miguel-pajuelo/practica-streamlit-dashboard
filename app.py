@@ -13,7 +13,6 @@ Configura la página principal de Streamlit con título, ícono y layout amplio.
 """
 st.set_page_config(
     page_title="Dashboard Ventas - Empresa Alimentación",
-    page_icon="📈",
     layout="wide",
 )
 
