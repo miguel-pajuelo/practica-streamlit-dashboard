@@ -57,48 +57,79 @@ URL2 = "https://dl.dropboxusercontent.com/scl/fi/88mexprkeldc8d6g4wlob/parte_2.c
 @st.cache_data(show_spinner=True)
 def load_data() -> pd.DataFrame:
     """
-    Carga el dataset desde dos archivos CSV (parte_1.csv y parte_2.csv) y los concatena en un solo DataFrame.
-    
-    - Optimiza los tipos de datos para reducir el uso de memoria y mejorar el rendimiento en agregaciones.
-    - Convierte columnas de strings a categorías para ahorrar memoria en datasets grandes.
-    - Permite sobrescribir las rutas de los archivos mediante variables de entorno (útil para despliegues).
-    
-    Returns:
-        pd.DataFrame: DataFrame concatenado y optimizado con los datos de ventas.
+    Carga el dataset desde dos CSV (parte_1 y parte_2) y los concatena.
+
+    Versión “Cloud-ready”:
+    - Prioriza DATA_URL_1 / DATA_URL_2 (Dropbox/HTTP) si existen.
+    - Si no, usa DATA_PATH_1 / DATA_PATH_2 (rutas locales).
+    - Si no, busca parte_1.csv / parte_2.csv junto a app.py.
+    - Mantiene optimización de memoria (dtypes + categorías).
     """
-    usecols = ["date", "store_nbr", "family", "state", "onpromotion", "sales"]
+    base_dir = Path(__file__).parent
+    p1 = base_dir / "parte_1.csv"
+    p2 = base_dir / "parte_2.csv"
+
+    # 1) URLs (ideal para Streamlit Cloud)
+    url1 = os.getenv("DATA_URL_1")
+    url2 = os.getenv("DATA_URL_2")
+
+    # Si no vienen por env, usa las constantes globales URL1/URL2 si existen
+    if not url1 and "URL1" in globals():
+        url1 = globals()["URL1"]
+    if not url2 and "URL2" in globals():
+        url2 = globals()["URL2"]
+
+    # 2) Rutas locales por env (fallback)
+    p1_env = os.getenv("DATA_PATH_1")
+    p2_env = os.getenv("DATA_PATH_2")
+    if p1_env:
+        p1 = Path(p1_env)
+    if p2_env:
+        p2 = Path(p2_env)
+
+    # Columnas específicas a cargar para evitar datos innecesarios
+    usecols = [
+        "date", "store_nbr", "family", "sales", "onpromotion",
+        "holiday_type", "locale", "locale_name", "transferred",
+        "dcoilwtico", "city", "state", "store_type", "cluster",
+        "transactions", "year", "month", "week", "quarter", "day_of_week",
+    ]
+
+    # Tipos de datos optimizados para reducir memoria
     dtypes = {
         "store_nbr": "int16",
-        "family": "category",
-        "state": "category",
+        "sales": "float32",
         "onpromotion": "int16",
-        "sales": "float32"
+        "dcoilwtico": "float32",
+        "cluster": "int16",
+        "transactions": "float32",
+        "year": "int16",
+        "month": "int8",
+        "week": "int16",
+        "quarter": "int8",
     }
 
-    df1 = pd.read_csv(URL1, usecols=usecols, dtype=dtypes, parse_dates=["date"], low_memory=False)
-    df2 = pd.read_csv(URL2, usecols=usecols, dtype=dtypes, parse_dates=["date"], low_memory=False)
+    # Elige fuente (URL si está, si no archivo local)
+    src1 = url1 if url1 else p1
+    src2 = url2 if url2 else p2
 
+    # Carga de los CSV con optimizaciones
+    df1 = pd.read_csv(src1, usecols=usecols, dtype=dtypes, parse_dates=["date"], low_memory=False)
+    df2 = pd.read_csv(src2, usecols=usecols, dtype=dtypes, parse_dates=["date"], low_memory=False)
+
+    # Concatenación de los DataFrames
     df = pd.concat([df1, df2], ignore_index=True)
 
-    # --------- Columnas derivadas necesarias ---------
-    df["year"] = df["date"].dt.year.astype("int16")
-    df["month"] = df["date"].dt.month.astype("int8")
-    df["week"] = df["date"].dt.isocalendar().week.astype("int8")
-    df["quarter"] = df["date"].dt.quarter.astype("int8")
-    df["day_of_week"] = df["date"].dt.day_name()
-
-    # --------- Columnas dummy para compatibilidad ---------
-    df["holiday_type"] = pd.NA
-    df["transferred"] = False
-    df["dcoilwtico"] = np.nan
-    df["transactions"] = 0
-    df["city"] = "Unknown"
-    df["store_type"] = "Unknown"
-    df["cluster"] = 0
+    # Conversión de columnas categóricas para optimizar memoria
+    cat_cols = [
+        "family", "holiday_type", "locale", "locale_name", "transferred",
+        "city", "state", "store_type", "day_of_week",
+    ]
+    for c in cat_cols:
+        if c in df.columns:
+            df[c] = df[c].astype("category")
 
     return df
-
-
 
 @st.cache_data(show_spinner=False)
 def build_derived_tables(df: pd.DataFrame) -> dict:
