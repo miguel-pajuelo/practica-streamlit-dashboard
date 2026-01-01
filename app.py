@@ -21,81 +21,88 @@ st.set_page_config(
 st.markdown(
     """
     <style>
-      /* Fondo general con un tono cálido y sutil */
+      /* Fondo general oscuro */
       .stApp {
-        background-color: #f9f7f4; /* Beige claro para un feeling humano y cálido */
-        color: #333333; /* Texto oscuro para legibilidad */
+        background-color: #0b0f19;
+        color: #e5e7eb;
       }
-      
-      /* Contenedores con bordes redondeados y sombras suaves para profundidad */
+
+      /* Contenedor principal sin “tarjetas” claras */
       .block-container { 
         padding-top: 1.2rem; 
         padding-bottom: 2.5rem; 
-        background-color: #ffffff; /* Fondo blanco para secciones */
-        border-radius: 12px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); /* Sombra suave */
+        background-color: transparent;
+        border-radius: 0px;
+        box-shadow: none;
       }
-      
-      /* Métricas con tipografía más grande y amigable */
-      [data-testid="stMetricValue"] { 
-        font-size: 2rem; 
-        font-weight: bold; 
-        color: #4a90e2; /* Azul suave para resaltar */
+
+      /* Métricas: sin contenedor extra y con buen contraste */
+      [data-testid="stMetric"]{
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
       }
       [data-testid="stMetricLabel"] { 
         font-size: 1rem; 
-        color: #666666; /* Gris suave */
+        color: #cbd5e1;
       }
-      
-      /* Pestañas con estilo más humano: mayor tamaño, hover suave */
+      [data-testid="stMetricValue"] { 
+        font-size: 2.1rem; 
+        font-weight: 800; 
+        color: #60a5fa;
+      }
+      [data-testid="stMetricDelta"]{
+        color: #a3a3a3;
+      }
+
+      /* Pestañas */
       .stTabs [data-baseweb="tab"] { 
-        font-size: 1.1rem; 
-        padding: 0.8rem 1.2rem; 
-        border-radius: 8px; 
-        transition: background-color 0.3s ease; /* Transición suave */
+        font-size: 1.05rem; 
+        padding: 0.7rem 1.1rem; 
+        border-radius: 10px; 
+        transition: background-color 0.25s ease;
+        color: #e5e7eb;
       }
       .stTabs [data-baseweb="tab"]:hover {
-        background-color: #e8f4fd; /* Fondo azul claro al hover */
+        background-color: rgba(96,165,250,0.12);
       }
-      
-      /* Tarjetas KPI con diseño más amigable: gradiente sutil, hover efecto */
-      .kpi-card { 
-        border-radius: 16px; 
-        padding: 1rem 1.2rem; 
-        background: linear-gradient(135deg, #ffffff, #f0f4f8); /* Gradiente suave */
-        border: 1px solid rgba(0, 0, 0, 0.05); 
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-        transition: transform 0.2s ease, box-shadow 0.2s ease; /* Animación al hover */
-      }
-      .kpi-card:hover {
-        transform: translateY(-4px); /* Levantar ligeramente */
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-      }
-      
-      /* Texto muted para descripciones secundarias */
+
+      /* Texto muted */
       .muted { 
-        opacity: 0.75; 
+        opacity: 0.9; 
         font-size: 0.95rem; 
-        color: #555555; 
+        color: #94a3b8; 
       }
-      
-      /* Títulos con tipografía más humana */
+
+      /* Títulos */
       h1, h2, h3 {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Fuente más amigable */
-        color: #2c3e50; /* Azul oscuro suave */
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        color: #e5e7eb;
       }
-      
-      /* Botones y selectboxes con estilo redondeado */
+
+      /* Inputs */
+      .stSelectbox > div, .stSelectbox div[data-baseweb="select"] {
+        background: rgba(17,24,39,0.85) !important;
+        border-radius: 10px !important;
+      }
+      .stSelectbox *{
+        color: #e5e7eb !important;
+      }
       .stSelectbox, .stButton button {
-        border-radius: 8px;
-        border: 1px solid #d1d5db;
-        transition: border-color 0.3s ease;
+        border-radius: 10px;
+        border: 1px solid rgba(148,163,184,0.25);
+        transition: border-color 0.25s ease, background-color 0.25s ease;
       }
       .stSelectbox:hover, .stButton button:hover {
-        border-color: #4a90e2;
+        border-color: rgba(96,165,250,0.55);
       }
-      
-      /* Gráficos con márgenes suaves */
+      .stButton button{
+        background: rgba(17,24,39,0.85);
+        color: #e5e7eb;
+      }
+
+      /* Gráficos */
       .plotly-chart {
         border-radius: 12px;
         overflow: hidden;
@@ -120,16 +127,16 @@ DAY_ES = {
 # -----------------------------
 # Estilo visual para gráficos (Plotly)
 # -----------------------------
-CHART_BG = "#0b0f19"  # oscuro neutro (evita negros puros, mejor contraste)
+CHART_BG = "#0b0f19"
 GRID_COLOR = "rgba(255,255,255,0.10)"
-AXIS_COLOR = "rgba(255,255,255,0.25)"
+AXIS_COLOR = "rgba(255,255,255,0.28)"
 FONT_COLOR = "#e5e7eb"
 
-# Paletas/escala para fondos oscuros (sin rojos chillones)
-SCALE_TEAL = ["#0b132b", "#1c2541", "#3a506b", "#5bc0be", "#b7e4c7"]
-SCALE_BLUE = ["#0a1f44", "#0b3c5d", "#1d5b79", "#2f8f9d", "#82c0cc"]
-SCALE_PURPLE = ["#120b1a", "#2b163f", "#472a68", "#6b4fa2", "#9b8ad6"]
-SCALE_GREENBLUE = ["#061a16", "#0b3d2e", "#146c54", "#2e9c7f", "#8fd3c7"]
+# Paletas para fondo oscuro (evitan tonos demasiado oscuros)
+SCALE_TEAL = ["#ccfbf1", "#99f6e4", "#5eead4", "#2dd4bf", "#14b8a6"]
+SCALE_BLUE = ["#dbeafe", "#bfdbfe", "#93c5fd", "#60a5fa", "#3b82f6"]
+SCALE_PURPLE = ["#ede9fe", "#ddd6fe", "#c4b5fd", "#a78bfa", "#8b5cf6"]
+SCALE_CYAN = ["#ecfeff", "#cffafe", "#a5f3fc", "#67e8f9", "#22d3ee"]
 
 def style_base(fig):
     """Aplica un tema oscuro coherente a cualquier figura Plotly."""
@@ -139,9 +146,8 @@ def style_base(fig):
         font=dict(color=FONT_COLOR),
         title=dict(font=dict(color=FONT_COLOR)),
         legend=dict(font=dict(color=FONT_COLOR)),
-        hoverlabel=dict(bgcolor="rgba(10,15,25,0.95)", font=dict(color=FONT_COLOR)),
+        hoverlabel=dict(bgcolor="rgba(10,15,25,0.96)", font=dict(color=FONT_COLOR)),
     )
-    # Ejes con contraste alto + rejilla sutil
     fig.update_xaxes(
         showline=True,
         linecolor=AXIS_COLOR,
@@ -158,22 +164,20 @@ def style_base(fig):
         gridcolor=GRID_COLOR,
         zeroline=False,
     )
-
-    # Colorbar (si existe) legible en oscuro
     try:
         fig.update_coloraxes(colorbar=dict(tickfont=dict(color=FONT_COLOR), titlefont=dict(color=FONT_COLOR)))
     except Exception:
         pass
 
 def style_bar(fig, orientation: str = "v"):
-    """Tema oscuro + borde sutil para barras. orientation: 'v' (vertical) o 'h' (horizontal)."""
+    """Tema oscuro + borde sutil para barras. orientation: 'v' o 'h'."""
     style_base(fig)
     fig.update_traces(marker_line_width=0.6, marker_line_color="rgba(255,255,255,0.18)")
     if orientation == "h":
-        fig.update_yaxes(showgrid=False)   # categorías
+        fig.update_yaxes(showgrid=False)
         fig.update_xaxes(showgrid=True)
     else:
-        fig.update_xaxes(showgrid=False)   # categorías
+        fig.update_xaxes(showgrid=False)
         fig.update_yaxes(showgrid=True)
 
 def style_time_line(fig, dtick=None):
@@ -186,7 +190,7 @@ def style_time_line(fig, dtick=None):
         spikemode="across",
         spikesnap="cursor",
         spikedash="dot",
-        spikecolor="rgba(255,255,255,0.35)",
+        spikecolor="rgba(255,255,255,0.38)",
         spikethickness=1,
     )
     if dtick is not None:
@@ -195,7 +199,7 @@ def style_time_line(fig, dtick=None):
 def style_scatter(fig):
     """Tema oscuro para scatter (coherencia visual)."""
     style_base(fig)
-    fig.update_traces(marker=dict(opacity=0.8))
+    fig.update_traces(marker=dict(opacity=0.82))
 
 # -----------------------------
 # Carga de datos
@@ -327,21 +331,13 @@ with tabs[0]:
     # KPIs básicos globales en tarjetas más amigables
     c1, c2, c3, c4 = st.columns(4)
     with c1:
-        st.markdown("<div class='kpi-card'>", unsafe_allow_html=True)
         st.metric("Tiendas", format_int(n_stores))
-        st.markdown("</div>", unsafe_allow_html=True)
     with c2:
-        st.markdown("<div class='kpi-card'>", unsafe_allow_html=True)
         st.metric("Productos (families)", format_int(n_products))
-        st.markdown("</div>", unsafe_allow_html=True)
     with c3:
-        st.markdown("<div class='kpi-card'>", unsafe_allow_html=True)
         st.metric("Estados", format_int(n_states))
-        st.markdown("</div>", unsafe_allow_html=True)
     with c4:
-        st.markdown("<div class='kpi-card'>", unsafe_allow_html=True)
         st.metric("Meses con datos", format_int(n_months))
-        st.markdown("</div>", unsafe_allow_html=True)
 
     st.markdown(f"<div class='muted'>Rango de fechas: <b>{date_min}</b> → <b>{date_max}</b></div>", unsafe_allow_html=True)
     st.divider()
@@ -417,7 +413,7 @@ with tabs[0]:
         title="Top 10 tiendas por venta media diaria de productos en promoción",
         labels={"store_nbr": "Tienda", "mean_daily_promo_sales": "Venta media diaria (promo)"},
         text_auto=False,
-        color="mean_daily_promo_sales", color_continuous_scale=SCALE_GREENBLUE
+        color="mean_daily_promo_sales", color_continuous_scale=SCALE_CYAN
     )
     fig_promo_store.update_layout(
         height=380,
@@ -447,10 +443,7 @@ with tabs[0]:
 
     m1, m2 = st.columns([1, 3])
     with m1:
-        st.markdown("<div class='kpi-card'>", unsafe_allow_html=True)
         st.metric("Mejor día (media)", best_dow, f"{best_val:,.0f}".replace(",", "."))
-        st.markdown("</div>", unsafe_allow_html=True)
-
     with m2:
         fig_dow = px.bar(
             dow,
@@ -516,17 +509,11 @@ with tabs[1]:
 
     k1, k2, k3 = st.columns(3)
     with k1:
-        st.markdown("<div class='kpi-card'>", unsafe_allow_html=True)
         st.metric("Ventas totales (unidades)", f"{total_units:,.0f}".replace(",", "."))
-        st.markdown("</div>", unsafe_allow_html=True)
     with k2:
-        st.markdown("<div class='kpi-card'>", unsafe_allow_html=True)
         st.metric("Productos vendidos (distinct)", format_int(unique_products_sold))
-        st.markdown("</div>", unsafe_allow_html=True)
     with k3:
-        st.markdown("<div class='kpi-card'>", unsafe_allow_html=True)
         st.metric("Productos vendidos en promo (distinct)", format_int(unique_promo_products))
-        st.markdown("</div>", unsafe_allow_html=True)
 
     # Gráfico de ventas por año para la tienda
     fig_store_year = px.bar(
@@ -602,10 +589,7 @@ with tabs[2]:
 
     c1, c2 = st.columns([1, 2])
     with c1:
-        st.markdown("<div class='kpi-card'>", unsafe_allow_html=True)
         st.metric("Producto #1 (estado)", str(top_prod), f"{top_units:,.0f}".replace(",", "."))
-        st.markdown("</div>", unsafe_allow_html=True)
-
     with c2:
         fig_prod_rank = px.bar(
             prod_rank,
@@ -645,7 +629,6 @@ with tabs[3]:
         )
         fig_share.update_layout(height=360, margin=dict(l=20, r=20, t=60, b=20))
         style_time_line(fig_share)
-        # Para series diarias largas: puntos pequeños para “instantes” sin saturar
         fig_share.update_traces(marker=dict(size=3, opacity=0.75))
         st.plotly_chart(fig_share, use_container_width=True)
 
@@ -656,7 +639,7 @@ with tabs[3]:
             y="total_sales",
             title="Relación: ventas promo vs ventas totales (muestra)",
             labels={"promo_sales": "Ventas promo", "total_sales": "Ventas totales"},
-            color="promo_share", color_continuous_scale=SCALE_GREENBLUE
+            color="promo_share", color_continuous_scale=SCALE_CYAN
         )
         fig_promo_vs.update_layout(height=360, margin=dict(l=20, r=20, t=60, b=20))
         style_scatter(fig_promo_vs)
@@ -672,7 +655,6 @@ with tabs[3]:
 
     c1, c2 = st.columns([1, 2])
     with c1:
-        st.markdown("<div class='kpi-card'>", unsafe_allow_html=True)
         diff = holiday_mean.loc[holiday_mean["is_holiday"] == True, "sales"].values
         base = holiday_mean.loc[holiday_mean["is_holiday"] == False, "sales"].values
         if len(diff) and len(base) and base[0] > 0:
@@ -680,7 +662,6 @@ with tabs[3]:
             st.metric("Cambio medio (holiday vs no)", f"{lift:,.1f}%".replace(",", "."))
         else:
             st.metric("Cambio medio (holiday vs no)", "N/A")
-        st.markdown("</div>", unsafe_allow_html=True)
 
     with c2:
         fig_holiday = px.bar(
