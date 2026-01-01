@@ -66,7 +66,7 @@ def load_data() -> pd.DataFrame:
     Returns:
         pd.DataFrame: DataFrame concatenado y optimizado con los datos de ventas.
     """
-    usecols = ["date","store_nbr","family","state","onpromotion","sales"]
+    usecols = ["date", "store_nbr", "family", "state", "onpromotion", "sales"]
     dtypes = {
         "store_nbr": "int16",
         "family": "category",
@@ -79,6 +79,23 @@ def load_data() -> pd.DataFrame:
     df2 = pd.read_csv(URL2, usecols=usecols, dtype=dtypes, parse_dates=["date"], low_memory=False)
 
     df = pd.concat([df1, df2], ignore_index=True)
+
+    # --------- Columnas derivadas necesarias ---------
+    df["year"] = df["date"].dt.year.astype("int16")
+    df["month"] = df["date"].dt.month.astype("int8")
+    df["week"] = df["date"].dt.isocalendar().week.astype("int8")
+    df["quarter"] = df["date"].dt.quarter.astype("int8")
+    df["day_of_week"] = df["date"].dt.day_name()
+
+    # --------- Columnas dummy para compatibilidad ---------
+    df["holiday_type"] = pd.NA
+    df["transferred"] = False
+    df["dcoilwtico"] = np.nan
+    df["transactions"] = 0
+    df["city"] = "Unknown"
+    df["store_type"] = "Unknown"
+    df["cluster"] = 0
+
     return df
 
 
